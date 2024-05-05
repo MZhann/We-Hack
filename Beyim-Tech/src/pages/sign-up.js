@@ -49,7 +49,7 @@ const SignUp = () => {
     };
 
     const handleSubmit = async (e) => {
-        console.log("clicked");
+        console.log("clicked sign up button");
         e.preventDefault();
 
         const isValidPassword = (password) =>
@@ -65,17 +65,15 @@ const SignUp = () => {
 
         if (validate()) {
             const requestBody = {
-                first_name: name,
-                last_name: null,
+                username: name,
                 email: email,
                 password: password,
-                photo: null,
             };
 
             try {
                 setIsLoading(true);
                 await axios
-                    .post(`${config.baseUrl}/api/v1/register/`, requestBody)
+                    .post(`https://tolqyn-production-fbd9.up.railway.app/api/v1/sign-up`, requestBody)
                     .then((res) => {
                         localStorage.setItem("accessToken", res.data.access);
                         localStorage.setItem("refreshToken", res.data.refresh);

@@ -18,6 +18,7 @@ import back from "../../public/images/back.png";
 const SignIn = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState("");
+    const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [passwordShown, setPasswordShown] = useState(false);
@@ -27,12 +28,12 @@ const SignIn = () => {
 
         if (validate()) {
             const requestBody = {
-                email: email,
+                name: email,
                 password: password,
             };
             setIsLoading(true);
             axios
-                .post(`${config.baseUrl}/api/v1/login/`, requestBody)
+                .post(`https://tolqyn-production-fbd9.up.railway.app/api/v1/sign-in/access-token`, requestBody)
                 .then((res) => {
                     localStorage.setItem("accessToken", res.data.access);
                     localStorage.setItem("refreshToken", res.data.refresh);
@@ -86,14 +87,12 @@ const SignIn = () => {
                 </Link>
             </div>
             <input
-                id="email"
-                className={`w-[327px] h-[50px] rounded-xl border-2 shadow-gray-500 text-xs p-3 mt-24 ${
-                    !validateEmail(email) && "border-red-500"
-                }`}
-                placeholder="your.email@gmail.com"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="name"
+                className={`w-[327px] h-[50px] rounded-xl border-2 shadow-gray-500 text-xs p-3 mt-24`}
+                placeholder="name"
+                type="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
             />
             <div className="flex flex-col items-center relative mt-4">
                 <input
