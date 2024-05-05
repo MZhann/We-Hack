@@ -1,1 +1,1 @@
-# We-Hack
+# hacknu-epam
