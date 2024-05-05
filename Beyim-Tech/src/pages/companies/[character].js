@@ -3,6 +3,7 @@ import "../../app/globals.css";
 
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
+import axios from "axios";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {
     MainContainer,
@@ -33,11 +34,20 @@ const characterRoles = {
 const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
 // Functional component for the chat application
-function App() {
-    // Router instance to access URL query parameters
+const App =({params}) => {  
     const router = useRouter();
-    const { character } = router.query; // Extract 'character' query parameter
 
+    const { character } = router.query; 
+    console.log('character', character);
+    // Router instance to access URL query parameters
+    const companyId=4;
+    const [id, setId] = useState(4);
+    // const { character } = router.query; // Extract 'character' query parameter
+
+
+    const [companyData, setCompanyData] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
     const companyName = "Beyim TECH";
     const companyInfo =
         "Lorem Ipsum is simply dummy text of the into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum";
@@ -49,23 +59,56 @@ function App() {
         content: "",
     });
 
-    // Effect hook to update system message when character changes
     useEffect(() => {
-        if (character && characterRoles[character]) {
+        const { id } = router.query;
+        setId(id);
+        if (id && characterRoles[id]) {
             setSystemMessage({
                 role: "system",
-                content: characterRoles[character],
+                content: characterRoles[id],
             });
             setMessages([
                 {
-                    message: entryWords[character],
+                    message: entryWords[id],
                     sentTime: "just now",
                     direction: "incoming",
                     sender: "ChatGPT",
                 },
             ]);
         }
-    }, [character]);
+        console.log(id)
+    }, [id]);
+    useEffect(() => {
+        const fetchCompanyData = async () => {
+            try {
+                // Send GET request to fetch company data by ID
+                const response = await axios.get(`https://tolqyn-production-fbd9.up.railway.app/api/v1/companies/${companyId}`, {
+                    headers: {
+                        Authorization:
+                            "Bearer " + localStorage.getItem("accessToken"),
+                    },
+                });
+                setCompanyData(response.data);
+            } catch (error) {
+                setError(error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchCompanyData();
+    }, [companyId]);
+
+    
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error.message}</div>;
+    }
+    // Effect hook to update system message when character changes
+    
 
     // Function to handle user message sending
     const handleSend = async (message) => {
@@ -135,9 +178,9 @@ function App() {
 
     // Render chat UI
     return (
-        <div className="flex flex-col w-full items-center justify-center bg-green-500 h-full">
+        <div className="flex flex-col w-full items-center justify-center bg-[#f5fcbb]  h-full">
             <Navbar />
-            <div className="w-[90%] h-[600px] bg-red-200 rounded-lg shadow-lg p-6 flex justify-between">
+            <div className="w-[90%] h-[600px]  rounded-lg shadow-lg p-6 flex justify-between">
                 <div>
                     <div className="text-3xl">{companyName}</div>
                     <div className="text-lg w-[600px] mt-10">{companyInfo}</div>
@@ -147,7 +190,7 @@ function App() {
                     <MainContainer style={{ width: "504px", borderRadius:"20px" }}>
                         <ChatContainer>
                             <MessageList
-                                style={{ height: 380}}
+                                style={{ height: 500}}
                                 scrollBehavior="smooth"
                                 typingIndicator={
                                     isTyping ? (

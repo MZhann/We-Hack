@@ -75,11 +75,13 @@ const SignUp = () => {
                 await axios
                     .post(`https://tolqyn-production-fbd9.up.railway.app/api/v1/sign-up`, requestBody)
                     .then((res) => {
-                        localStorage.setItem("accessToken", res.data.access);
-                        localStorage.setItem("refreshToken", res.data.refresh);
+                        // localStorage.setItem("accessToken", res.data.access);
+                        // localStorage.setItem("refreshToken", res.data.refresh);
+                        console.log(res.data)
                     });
                 setIsLoading(false);
-                await handleLogin();
+                // await handleLogin();
+                router.push("/sing-in");
             } catch (error) {
                 setIsLoading(false);
                 if (
@@ -94,36 +96,41 @@ const SignUp = () => {
         }
     };
     const router = useRouter();
-    async function handleLogin() {
-        const requestBody = {
-            email: email,
-            password: password,
-        };
+    // async function handleLogin() {
+    //     console.log(name)
+    //     console.log(password)
+    //     const requestBody = {
+    //         username: name,
+    //         password: password,
+    //     };
 
-        try {
-            setIsLoading(true);
-            const response = await axios.post(
-                `${config.baseUrl}/api/v1/login/`,
-                requestBody
-            );
-            localStorage.setItem("accessToken", response.data.access);
-            localStorage.setItem("refreshToken", response.data.refresh);
-            setIsLoading(false);
+    //     try {
+    //         setIsLoading(true);
+    //         console.log('error is not here')
+    //         const response = await axios.post(
+    //             `https://tolqyn-production-fbd9.up.railway.app/api/v1/sign-in/access-token`,
+    //             requestBody
+    //         );
 
-            // Redirect to home page
-            router.push("/test");
-        } catch (error) {
-            setIsLoading(false);
-            console.error(error);
-            if (
-                error.response &&
-                error.response.data &&
-                error.response.data.error
-            ) {
-                setErrorMessage(error.response.data.error);
-            }
-        }
-    }
+    //         console.log('response', response.data);
+    //         localStorage.setItem("accessToken", response.data.access);
+    //         localStorage.setItem("refreshToken", response.data.refresh);
+    //         setIsLoading(false);
+
+    //         // Redirect to home page
+    //         router.push("/");
+    //     } catch (error) {
+    //         setIsLoading(false);
+    //         console.error(error);
+    //         if (
+    //             error.response &&
+    //             error.response.data &&
+    //             error.response.data.error
+    //         ) {
+    //             setErrorMessage(error.response.data.error);
+    //         }
+    //     }
+    // }
     return (
         <div className="w-full flex flex-col items-center bg-white min-h-screen ">
             <div className="absolute text-white font-bold text-2xl z-50 mt-5">

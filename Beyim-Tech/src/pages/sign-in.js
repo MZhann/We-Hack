@@ -23,48 +23,77 @@ const SignIn = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [passwordShown, setPasswordShown] = useState(false);
 
+    // const handleSubmit = (e) => {
+    //     console.log('clicked')
+    //     e.preventDefault();
+    
+    //     console.log(name, password);
+    //     const requestBody = {
+    //         username: name,
+    //         password: password,
+    //     };
+    
+    //     setIsLoading(true);
+    //     console.log('before axios');
+    
+    //     axios
+    //         .post(`https://tolqyn-production-fbd9.up.railway.app/api/v1/sign-in/access-token`, requestBody)
+    //         .then((res) => {
+    //             console.log('res data: ', res.data);
+    //             localStorage.setItem("accessToken", res.data.access);
+    //             localStorage.setItem("refreshToken", res.data.refresh);
+    //             window.location.href = "/";
+    //             setIsLoading(false); // Move inside .then()
+    //         })
+    //         .catch((error) => {
+    //             console.error(error);
+    //             setIsLoading(false); // Move inside .catch()
+    //             if (
+    //                 error.response &&
+    //                 error.response.data &&
+    //                 error.response.data.error
+    //             ) {
+    //                 setErrorMessage(error.response.data.error);
+    //             }
+    //         });
+    // };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        if (validate()) {
-            const requestBody = {
-                name: email,
-                password: password,
-            };
-            setIsLoading(true);
-            axios
-                .post(`https://tolqyn-production-fbd9.up.railway.app/api/v1/sign-in/access-token`, requestBody)
-                .then((res) => {
-                    localStorage.setItem("accessToken", res.data.access);
-                    localStorage.setItem("refreshToken", res.data.refresh);
-                    window.location.href = "/test";
-                })
-                .catch((error) => {
-                    console.error(error);
-                    if (
-                        error.response &&
-                        error.response.data &&
-                        error.response.data.error
-                    ) {
-                        setErrorMessage(error.response.data.error);
-                    }
-                });
-            setIsLoading(false);
-        }
+    
+        // Define request body
+        const requestBody = new URLSearchParams();
+        requestBody.append('grant_type', '');
+        requestBody.append('username', name);
+        requestBody.append('password', password);
+        requestBody.append('scope', '');
+        requestBody.append('client_id', '');
+        requestBody.append('client_secret', '');
+    
+        setIsLoading(true); // Set loading state
+    
+        // Make POST request using Axios
+        axios.post('https://tolqyn-production-fbd9.up.railway.app/api/v1/sign-in/access-token', requestBody)
+            .then((res) => {
+                console.log('Response:', res.data);
+                localStorage.setItem("accessToken", res.data.access_token);
+                localStorage.setItem("refreshToken", res.data.refresh_token);
+                window.location.href = "/"; // Redirect to home page or desired destination
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                if (error.response && error.response.data && error.response.data.error) {
+                    setErrorMessage(error.response.data.error);
+                }
+            })
+            .finally(() => {
+                setIsLoading(false); // Set loading state to false regardless of success or failure
+            });
     };
+    
+    
 
-    const validate = () => {
-        let error = "";
-
-        if (!validateEmail(email)) {
-            error = "Please enter a valid email address.";
-        } else if (password.length < 6) {
-            error = "Password must be at least 6 characters long.";
-        }
-
-        setErrorMessage(error);
-        return !error;
-    };
+    
 
     const validateEmail = (email) => {
         const re =
